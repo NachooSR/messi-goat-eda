@@ -232,43 +232,6 @@ def run_analysis():
     return results
 
 
-def build_readme_context(results):
-    """
-    Resume los resultados principales para poder escribir el README sin numeros a mano.
-    """
-    by_year = results["goals_by_year"]
-    by_age = results["goals_by_age"]
-    by_venue = results["goals_by_venue"]
-    by_comp = results["goals_by_competition"]
-    by_opp = results["goals_by_opponent"]
-    by_type = results["goals_by_type"]
-    by_period = results["goals_by_minute_period"]
-
-    peak_year = by_year.loc[by_year["goals"].idxmax()]
-    peak_age = by_age.loc[by_age["goals"].idxmax()]
-
-    return {
-        "total_goals": int(by_year["goals"].sum()),
-        "year_start": int(by_year["year"].min()),
-        "year_end": int(by_year["year"].max()),
-        "peak_year": int(peak_year["year"]),
-        "peak_year_goals": int(peak_year["goals"]),
-        "peak_age": int(peak_age["age"]),
-        "peak_age_goals": int(peak_age["goals"]),
-        "home_goals": int(by_venue.loc[by_venue["venue"].eq("Home"), "goals"].iloc[0]),
-        "away_goals": int(by_venue.loc[by_venue["venue"].eq("Away"), "goals"].iloc[0]),
-        "top_competition": by_comp.iloc[0]["competition"],
-        "top_competition_goals": int(by_comp.iloc[0]["goals"]),
-        "top_opponent": by_opp.iloc[0]["opponent"],
-        "top_opponent_goals": int(by_opp.iloc[0]["goals"]),
-        "top_goal_type": by_type.iloc[0]["goal_type"],
-        "top_goal_type_goals": int(by_type.iloc[0]["goals"]),
-        "top_period": by_period.loc[by_period["goals"].idxmax(), "minute_period"],
-        "top_period_goals": int(by_period["goals"].max()),
-        "clutch_goals": int(len(results["clutch_goals"])),
-    }
-
-
 if __name__ == "__main__":
-    analysis_results = run_analysis()
-    print(build_readme_context(analysis_results))
+    run_analysis()
+    print("Analisis terminado. Graficos guardados en outputs/figures/")

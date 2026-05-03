@@ -9,7 +9,6 @@ PROCESSED_DIR = PROJECT_ROOT / "data" / "processed"
 CLEAN_PATH = PROCESSED_DIR / "messi_goals_clean.csv"
 
 BIRTH_DATE = pd.Timestamp("1987-06-24")
-EXCLUDED_COMPETITIONS = {"2ª B - Grupo III"}
 
 
 def _normalize_text_columns(df: pd.DataFrame) -> pd.DataFrame:
@@ -42,10 +41,18 @@ def clean_goals(df: pd.DataFrame) -> pd.DataFrame:
     clean["age"] = ((clean["date"] - BIRTH_DATE).dt.days // 365).astype(int)
     clean["minute_period"] = clean["goal_minute"].apply(_minute_period)
 
-    clean["is_home_goal"] = clean["venue"].eq("Home")
+    # `venue` dice si el gol fue de local o visitante.
+    # Creo una columna booleana: True si fue local, False si fue visitante.
+    clean["is_home_goal"] = clean["venue"] == "Home"
 
-    clean = clean[~clean["competition"].isin(EXCLUDED_COMPETITIONS)].copy()
-    clean = clean[(clean["year"] > 2005) & (clean["year"] < 2026)].copy()
+    # Saco Barcelona B porque el EDA busca la carrera profesional principal.
+    # Primero creo una mascara: una Serie de True/False para cada fila.
+    is_not_barcelona_b = clean["club"] != "FC Barcelona B"
+    clean = clean[is_not_barcelona_b].copy()
+
+    # Dejo solo anios completos entre 2006 y 2025.
+    is_complete_year = (clean["year"] >= 2006) & (clean["year"] <= 2025)
+    clean = clean[is_complete_year].copy()
 
     cols_to_drop = ["goal_decade", "goal_minute_bucket"]
     clean = clean.drop(columns=cols_to_drop, errors="ignore")
