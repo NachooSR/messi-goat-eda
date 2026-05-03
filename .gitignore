@@ -1,0 +1,12 @@
+# entorno virtual
+env/ 
+
+# python
+__pycache__/
+*.pyc
+
+# archivos personales
+agents.md
+memory.md
+resumen_tecnico.md
+
