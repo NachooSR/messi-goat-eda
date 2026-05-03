@@ -11,6 +11,5 @@ def main() -> None:
     print(f"Periodo: {clean['year'].min()}-{clean['year'].max()}")
     print("Outputs: data/processed/ y outputs/figures/")
 
-
 if __name__ == "__main__":
     main()
